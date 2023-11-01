@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -62,10 +63,16 @@ import okhttp3.internal.http2.Header
 import java.nio.file.WatchEvent
 import java.util.Objects
 
+data class Data(val rating : Float, val reviewsCount: String )  {
+
+
+
+}
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+     //   val asd = Data(4.9F, modifier = ModifierInfo, "70M")
         WindowCompat.setDecorFitsSystemWindows(window, false);
         setContent {
           MainScreen();
@@ -141,6 +148,15 @@ class MainActivity : ComponentActivity() {
                    val items = listOf<Int>(R.drawable.imageone, R.drawable.imagetwo);
                    VideoPreviewRow(items, PaddingValues(start = 24.dp, end = 24.dp));
                }
+               item {
+                      Text(text = stringResource(R.string.bar), modifier = Modifier.padding
+                          (start = 24.dp, end = 24.dp, top = 20.dp, bottom = 12.dp), color = Color.White);
+                      RatingBlock(4.9f, "70M", Modifier.padding(start = 24.dp, end = 24.dp, bottom = 16.dp))
+
+
+
+                   
+               }
 
                itemsIndexed(list) {index, item ->
                            CommentBlock(
@@ -167,7 +183,19 @@ class MainActivity : ComponentActivity() {
            }
 
 
+    @Composable
+    fun RatingBlock(rating: Float, reviewsCount: String, modifier: Modifier) {
+        Row(modifier = modifier) {
+            Text(rating.toString(), color = Color.White, fontSize = 48.sp);
+            Column(verticalArrangement = Arrangement.Center, modifier = Modifier.height(70.dp).padding(start = 15.dp) ) {
+                Image(painter = painterResource(R.drawable.reviews), contentDescription = null);
+                Text(reviewsCount + " Reviews", color = Color.White)
+                
+            }
+            
+        }
 
+    }
 
     @Composable
     fun ScrollableChipsView(items : List<String>, modifier: Modifier, contentPadding: PaddingValues) {
@@ -194,7 +222,9 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun Chip(itemToShow : String, paddingValues: PaddingValues, backgoundColor : Color) {
 
-        Box(modifier = Modifier.clip(shape = RoundedCornerShape(50.dp)).background(backgoundColor) ) {
+        Box(modifier = Modifier
+            .clip(shape = RoundedCornerShape(50.dp))
+            .background(backgoundColor) ) {
             Text(itemToShow, color = Color.White)
         }
         }
