@@ -15,6 +15,7 @@ object AppTheme {
         val primary = Color(android.graphics.Color.BLACK)
         val divider = Color(0xff1a1f29)
         val chipBg = Color(0xff14314c)
+        val screenColor = Color(0Xff050b18);
     }
 
     object ButtonColors {

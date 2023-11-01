@@ -1,6 +1,5 @@
 package com.example.myapplication
 
-import android.inputmethodservice.Keyboard
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,51 +22,34 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.ModifierInfo
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import com.example.myapplication.ui.theme.AppTheme
-
-import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import okhttp3.internal.http2.Header
-import java.nio.file.WatchEvent
-import java.util.Objects
+import io.sanghun.compose.video.VideoPlayer
+import io.sanghun.compose.video.uri.VideoPlayerMediaItem
 
-data class Data(val rating : Float, val reviewsCount: String )  {
-
-
-
-}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,12 +60,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
+    //Главный экран
     @Composable
     fun MainScreen() {
-
-
-
             ApplySystemBarColors();
+
             Surface(
                 color = AppTheme.BgColors.primary,
                 modifier = Modifier.fillMaxSize()
@@ -95,6 +76,18 @@ class MainActivity : ComponentActivity() {
 
         }
     }
+
+    @Composable
+    private fun ApplySystemBarColors() {
+    val systemUiController = rememberSystemUiController();
+
+    SideEffect {
+        systemUiController.setStatusBarColor(color = Color.Transparent);
+        systemUiController.setStatusBarColor(color = Color.Transparent);
+        }
+    }
+
+
     @Composable
     fun DotaScreen() {
            val context = LocalContext.current
@@ -104,18 +97,22 @@ class MainActivity : ComponentActivity() {
         val userTwo = user(R.string.secondUserName, R.drawable.usertwophoto);
         val user_ui_first = userUi(R.string.comment, R.string.date, userOne);
         val user_ui_second = userUi(R.string.comment, R.string.date, userTwo);
-
         val list = listOf(user_ui_first, user_ui_second);
 
-
-           LazyColumn(state = lazyListState,
+        //Главная Scroll-column
+        LazyColumn(state = lazyListState,
                    modifier = Modifier
                        .fillMaxSize()
-                       .background(Color(0Xff050b18)),
+                       .background(AppTheme.BgColors.screenColor))  {
 
-                   ) {
+               //Хедер фото + лого с надписью
                item {
-                   DotaScreenHeader(Modifier.background(Color.Gray)) }
+
+                    DotaScreenHeader(Modifier.background(Color.Gray))
+
+                    }
+
+               //chips
                item {
                    val items = listOf("MOBA", "MULTIPLAYER", "STRATEGY");
                    ScrollableChipsView(
@@ -182,6 +179,78 @@ class MainActivity : ComponentActivity() {
 
 
            }
+
+    @Preview
+    @Composable
+    fun DotaScreenHeader(modifier: Modifier = Modifier) {
+
+               HeaderBackground (painter = painterResource(R.drawable.headerdota),
+                                 modifier = modifier.fillMaxWidth().height(400.dp),
+                                 contentScale = ContentScale.Crop)
+
+               HeaderGroup()
+
+    }
+
+    //Главное фото
+    @Composable
+    fun HeaderBackground( painter: Painter, modifier: Modifier = Modifier, contentScale : ContentScale) {
+
+                   Box {
+                             Image(painter = painter, contentDescription = "", modifier = modifier, contentScale = contentScale );
+                   }
+
+    }
+
+    //Лого + название игры
+    @Composable
+    fun HeaderGroup() {
+             Row(modifier = Modifier.offset(x = 20.dp, y = -35.dp))  {
+             DotaLogo()
+
+             DotaLine()
+             }
+    }
+
+    //Лого
+    @Composable
+    fun DotaLogo() {
+             Box(modifier = Modifier.size(100.dp, 100.dp)) {
+
+
+                   Image(painter = painterResource(R.drawable.square),
+                         contentDescription = "",
+                         modifier = Modifier.fillMaxSize());
+                   Box() {
+                   Image(painter = painterResource(R.drawable.dotalogo),
+                         contentDescription = "",
+                         modifier = Modifier.fillMaxSize().scale(0.6F))
+                   }
+             }
+    }
+    //Надписи и звезды
+    @Composable
+    fun DotaLine() {
+             Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.height(100.dp) ) {
+                    Column( modifier = Modifier.padding(top = 20.dp, start = 15.dp)) {
+
+
+                            Text(text = stringResource(R.string.label), style = AppTheme.TextStyle.Bold_20, color = AppTheme.TextColors.logoColor)
+
+                            Row() {
+
+                                  Image(painter = painterResource(R.drawable.startsv),
+                                        modifier = Modifier.padding(top = 5.dp).size(76.dp, 12.dp),contentDescription = null
+                                  )
+
+                                  Text(text = stringResource(R.string.mill), style = AppTheme.TextStyle.Regular_12,
+                                       color = AppTheme.TextColors.countColor, modifier = Modifier.padding(start = 5.dp, top = 3.dp))
+                            }
+
+                    }
+             }
+
+    }
 
 
     @Composable
@@ -281,76 +350,15 @@ class MainActivity : ComponentActivity() {
 
 
 
-    @Composable
-    private fun ApplySystemBarColors() {
-        val systemUiController = rememberSystemUiController();
-
-        SideEffect {
-            systemUiController.setStatusBarColor(color = Color.Transparent);
-            systemUiController.setStatusBarColor(color = Color.Transparent);
-        }
-    }
-
-    @Composable
-    fun DotaScreenHeader(modifier: Modifier = Modifier) {
-
-         HeaderBackground (painter = painterResource(R.drawable.headerdota), modifier = modifier
-             .fillMaxWidth()
-             .height(400.dp)
-             , contentScale = ContentScale.Crop) {
-
-         }
-         HeaderGroup()
 
 
-    }
-
-    @Composable
-    fun HeaderGroup() {
-        Row(modifier = Modifier.offset(x = 20.dp, y = -35.dp)) {
-            DotaLogo()
-
-            DotaLine()
-
-        }
-    }
-
-    @Composable
-    fun DotaLine() {
-        Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.height(100.dp) ) {
-            Column( modifier = Modifier.padding(top = 20.dp, start = 15.dp)) {
 
 
-                Text(text = stringResource(R.string.label), style = AppTheme.TextStyle.Bold_20,
-                    color = AppTheme.TextColors.logoColor)
-                Row() {
-                    Image(
-                        painter = painterResource(R.drawable.startsv),
-                        modifier = Modifier
-                            .padding(top = 5.dp)
-                            .size(76.dp, 12.dp),
-                        contentDescription = null
-                    )
-                    Text(text = stringResource(R.string.mill), style = AppTheme.TextStyle.Regular_12,
-                         color = AppTheme.TextColors.countColor, modifier = Modifier.padding(start = 5.dp, top = 3.dp))
-                }
 
-            }
-        }
 
-    }
 
-    @Composable
-    fun HeaderBackground(
-        painter: Painter,
-        modifier: Modifier = Modifier,
-        contentScale : ContentScale,
-        content: @Composable () -> Unit,
-    ) {
-       Box { Image(painter = painter, contentDescription = "", modifier = modifier, contentScale = contentScale );
-               }
 
-    }
+
 
     @Composable
     fun VideoPreviewRow(previewResList : List<Int>, contentPadding : PaddingValues) {
@@ -362,14 +370,22 @@ class MainActivity : ComponentActivity() {
                     .size(300.dp, 150.dp)
                     .padding(end = 15.dp)
                     .clip(shape = RoundedCornerShape(15.dp))) {
-                    Image(
-                        painter = painterResource(previewResList[index]),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                            )
 
+                    if(index == 0) {
+                        VideoPlayer(
+                            mediaItems = listOf(VideoPlayerMediaItem.RawResourceMediaItem(R.raw.dotatrailer)),
+                            autoPlay = false,
+                            modifier = Modifier.fillMaxSize(),
 
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(previewResList[index]),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
             }
         }
@@ -378,34 +394,7 @@ class MainActivity : ComponentActivity() {
 
    
 
-    @Composable
-    fun DotaLogo() {
-        Box(modifier = Modifier
-            .size(100.dp, 100.dp)
-             ) {
 
-
-            Image(
-                painter = painterResource(R.drawable.square),
-                contentDescription = "",
-                modifier = Modifier.fillMaxSize(),
-
-
-                );
-            Box() {
-                Image(
-                    painter = painterResource(R.drawable.dotalogo),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .scale(0.6F),
-
-
-
-                    )
-            }
-        }
-    }
 
 
 
