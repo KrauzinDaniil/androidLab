@@ -17,4 +17,5 @@
     <string name="label">DoTA 2</string>
     <string name="mill">70M</string>
     <string name="bar">Review &amp; Ratings</string>
+    <string name="buttonText">Install</string>
 </resources>

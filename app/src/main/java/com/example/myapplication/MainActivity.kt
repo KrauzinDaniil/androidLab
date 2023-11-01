@@ -28,6 +28,7 @@ import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -72,7 +73,6 @@ data class Data(val rating : Float, val reviewsCount: String )  {
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-     //   val asd = Data(4.9F, modifier = ModifierInfo, "70M")
         WindowCompat.setDecorFitsSystemWindows(window, false);
         setContent {
           MainScreen();
@@ -117,10 +117,10 @@ class MainActivity : ComponentActivity() {
                item {
                    DotaScreenHeader(Modifier.background(Color.Gray)) }
                item {
-                   val  items = listOf("MOBA", "MULTIPLAYER", "STRATEGY");
+                   val items = listOf("MOBA", "MULTIPLAYER", "STRATEGY");
                    ScrollableChipsView(
                       items,
-                      modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
+                      modifier = Modifier.padding(bottom = 10.dp),
                       contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
 
                    )
@@ -146,11 +146,12 @@ class MainActivity : ComponentActivity() {
                item {
 
                    val items = listOf<Int>(R.drawable.imageone, R.drawable.imagetwo);
-                   VideoPreviewRow(items, PaddingValues(start = 24.dp, end = 24.dp));
+                   VideoPreviewRow(items, PaddingValues(start = 24.dp, end = 9.dp));
                }
+
                item {
                       Text(text = stringResource(R.string.bar), modifier = Modifier.padding
-                          (start = 24.dp, end = 24.dp, top = 20.dp, bottom = 12.dp), color = Color.White);
+                          (start = 24.dp, end = 24.dp, top = 20.dp, bottom = 12.dp), color = AppTheme.TextColors.colorReview, style = AppTheme.TextStyle.Bold_16);
                       RatingBlock(4.9f, "70M", Modifier.padding(start = 24.dp, end = 24.dp, bottom = 16.dp))
 
 
@@ -175,7 +176,7 @@ class MainActivity : ComponentActivity() {
                        }
                item  {
 
-                  PrimaryOvalButton(text = "Install", onClick = { Toast.makeText(context, "CLICKED", Toast.LENGTH_LONG).show() }, modifier = Modifier )
+                  PrimaryOvalButton(onClick = { Toast.makeText(context, "CLICKED", Toast.LENGTH_LONG).show() }, modifier = Modifier )
                }
                }
 
@@ -186,10 +187,13 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun RatingBlock(rating: Float, reviewsCount: String, modifier: Modifier) {
         Row(modifier = modifier) {
-            Text(rating.toString(), color = Color.White, fontSize = 48.sp);
-            Column(verticalArrangement = Arrangement.Center, modifier = Modifier.height(70.dp).padding(start = 15.dp) ) {
+            Text(rating.toString(), color = AppTheme.TextColors.logoColor, style = AppTheme.TextStyle.Bold_48);
+            Column(verticalArrangement = Arrangement.Center, modifier = Modifier
+                .height(65.dp)
+                .padding(start = 15.dp) ) {
                 Image(painter = painterResource(R.drawable.reviews), contentDescription = null);
-                Text(reviewsCount + " Reviews", color = Color.White)
+                Text(reviewsCount + " Reviews", color = AppTheme.TextColors.colorNumberOfReviews,
+                    style = AppTheme.TextStyle.Regular_12, modifier = Modifier.padding(top = 10.dp))
                 
             }
             
@@ -201,13 +205,12 @@ class MainActivity : ComponentActivity() {
     fun ScrollableChipsView(items : List<String>, modifier: Modifier, contentPadding: PaddingValues) {
         LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp),
                 contentPadding = contentPadding,
-                 modifier = modifier) {
+                 modifier = modifier.offset(y = -10.dp)) {
               items(items.size) { index ->
 
                   Chip(
                       items[index],
-                      paddingValues = contentPadding,
-                      backgoundColor = Color.Blue,
+
 
 
 
@@ -220,12 +223,13 @@ class MainActivity : ComponentActivity() {
 
 
     @Composable
-    fun Chip(itemToShow : String, paddingValues: PaddingValues, backgoundColor : Color) {
+    fun Chip(itemToShow : String) {
 
         Box(modifier = Modifier
             .clip(shape = RoundedCornerShape(50.dp))
-            .background(backgoundColor) ) {
-            Text(itemToShow, color = Color.White)
+            .background(AppTheme.BgColors.chipBg)
+            .padding(start = 15.dp, top = 5.dp, bottom = 5.dp, end = 15.dp) ) {
+            Text(itemToShow,  color = AppTheme.TextColors.chipElementColor, style = AppTheme.TextStyle.Regular_12)
         }
         }
 
@@ -242,15 +246,16 @@ class MainActivity : ComponentActivity() {
                     .size(36.dp))  {
                     Image(painter = painterResource(userUi.user.image),contentDescription = null, contentScale = ContentScale.Crop)
                 }
-                Column() {
-                    Text(text = stringResource(userUi.user.username), color = Color.White)
-                    Text(text = stringResource(userUi.date), color = Color.White)
+                Column(modifier = Modifier.padding(start = 20.dp)) {
+                    Text(text = stringResource(userUi.user.username), color = AppTheme.TextColors.logoColor, style = AppTheme.TextStyle.Regular_16)
+                    Text(text = stringResource(userUi.date), color = AppTheme.TextColors.dateColor, style = AppTheme.TextStyle.Regular_12,
+                          modifier = Modifier.padding(top = 7.dp))
 
                 }
             }
 
-        Box()  {
-            Text(text = stringResource(userUi.text), color = Color.White)
+        Box(modifier = Modifier.padding(top = 20.dp))  {
+            Text(text = stringResource(userUi.text), color = AppTheme.TextColors.colorNumberOfReviews, style = AppTheme.TextStyle.Regular_12_20)
         }
             
         }
@@ -259,15 +264,19 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun PrimaryOvalButton(text : String, onClick : () -> Unit, modifier: Modifier) {
-        Button(onClick = onClick, modifier = Modifier
+    fun PrimaryOvalButton( onClick : () -> Unit, modifier: Modifier) {
+        Button(
+            onClick = onClick,
+            modifier = Modifier
 
-            .padding(start = 24.dp, end = 24.dp, top = 20.dp, bottom = 40.dp)
-            .wrapContentHeight(Alignment.CenterVertically)
-            .fillMaxWidth()
-            .height(40.dp),
-                shape = RectangleShape
-         ) { Text(text = text) }
+                .padding(start = 24.dp, end = 24.dp, top = 40.dp, bottom = 60.dp)
+                .wrapContentHeight(Alignment.CenterVertically)
+                .fillMaxSize()
+                .clip(shape = RoundedCornerShape(20.dp))
+                .height(64.dp),
+            shape = RectangleShape,
+            colors = ButtonDefaults.buttonColors(AppTheme.ButtonColors.buttonColor),
+        ) { Text(text = stringResource(R.string.buttonText), color = AppTheme.TextColors.buttonTextColor, style = AppTheme.TextStyle.Bold_20) }
         }
 
 
@@ -312,14 +321,18 @@ class MainActivity : ComponentActivity() {
             Column( modifier = Modifier.padding(top = 20.dp, start = 15.dp)) {
 
 
-                Text(text = stringResource(R.string.label), fontSize = 20.sp, color = Color.White)
+                Text(text = stringResource(R.string.label), style = AppTheme.TextStyle.Bold_20,
+                    color = AppTheme.TextColors.logoColor)
                 Row() {
                     Image(
                         painter = painterResource(R.drawable.startsv),
-                        modifier = Modifier.size(76.dp, 12.dp),
+                        modifier = Modifier
+                            .padding(top = 5.dp)
+                            .size(76.dp, 12.dp),
                         contentDescription = null
                     )
-                    Text(text = stringResource(R.string.mill), fontSize = 12.sp,color = Color.White )
+                    Text(text = stringResource(R.string.mill), style = AppTheme.TextStyle.Regular_12,
+                         color = AppTheme.TextColors.countColor, modifier = Modifier.padding(start = 5.dp, top = 3.dp))
                 }
 
             }
@@ -343,11 +356,22 @@ class MainActivity : ComponentActivity() {
     fun VideoPreviewRow(previewResList : List<Int>, contentPadding : PaddingValues) {
 
         LazyRow(modifier = Modifier.padding(contentPadding)) {
-            items(previewResList.size) { index -> Image(painter = painterResource(previewResList[index]), contentDescription = null, modifier = Modifier
-                .size(300.dp, 150.dp)
-                .clip(
-                    RoundedCornerShape(25.dp)
-                )  )  }
+            items(previewResList.size) { index ->
+
+                Box(modifier = Modifier
+                    .size(300.dp, 150.dp)
+                    .padding(end = 15.dp)
+                    .clip(shape = RoundedCornerShape(15.dp))) {
+                    Image(
+                        painter = painterResource(previewResList[index]),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                            )
+
+
+                }
+            }
         }
 
     }
