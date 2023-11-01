@@ -113,7 +113,7 @@ class MainActivity : ComponentActivity() {
                    val  items = listOf("MOBA", "MULTIPLAYER", "STRATEGY");
                    ScrollableChipsView(
                       items,
-                      modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
+                      modifier = Modifier.padding(top = 15.dp, bottom = 16.dp),
                       contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
 
                    )
