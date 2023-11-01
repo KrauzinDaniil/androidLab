@@ -13,6 +13,7 @@ object AppTheme  {
  object BgColors {
     val primary = Color(android.graphics.Color.BLACK)
     val divider = Color(0xff1a1f29)
+    val secondary = Color.Gray;
  }
  object ButtonColors {
 

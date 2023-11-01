@@ -113,7 +113,7 @@ class MainActivity : ComponentActivity() {
                    val  items = listOf("MOBA", "MULTIPLAYER", "STRATEGY");
                    ScrollableChipsView(
                       items,
-                      modifier = Modifier.padding(top = 15.dp, bottom = 16.dp),
+                      modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
                       contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
 
                    )
@@ -170,28 +170,38 @@ class MainActivity : ComponentActivity() {
 
 
     @Composable
-    fun ScrollableChipsView(items : List<Any>, modifier: Modifier, contentPadding: PaddingValues) {
+    fun ScrollableChipsView(items : List<String>, modifier: Modifier, contentPadding: PaddingValues) {
         LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp),
                 contentPadding = contentPadding,
                  modifier = modifier) {
               items(items.size) { index ->
 
-                 // Chip(
-                   //   items[index],
+                  Chip(
+                      items[index],
+                      paddingValues = contentPadding,
+                      backgoundColor = Color.Blue,
 
 
-                  //)
+
+                  )
 
               }
 
         }
     }
+
+
     @Composable
-    fun Chip(itemToShow : Any, paddingValues: PaddingValues, backgoundColor : Color) {
+    fun Chip(itemToShow : String, paddingValues: PaddingValues, backgoundColor : Color) {
+
+        Box(modifier = Modifier.clip(shape = RoundedCornerShape(50.dp)).background(backgoundColor) ) {
+            Text(itemToShow, color = Color.White)
+        }
+        }
 
 
 
-    }
+
 
     @Composable
     fun CommentBlock (userUi: userUi, modifier: Modifier = Modifier ) {
