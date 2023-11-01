@@ -1,2 +1,2 @@
-# androidLab
-EffectiveAndroidLab
+# Android Lab
+Краузин Даниил, первая Лаба по андройду
