@@ -18,4 +18,11 @@
     <string name="mill">70M</string>
     <string name="bar">Review &amp; Ratings</string>
     <string name="buttonText">Install</string>
+    <string name="MOBA">MOBA</string>
+    <string name="MULTIPLAYER">MULTIPLAYER</string>
+    <string name="STRATEGY">STRATEGY</string>
+    <string name="MOBA_DESC">MOBA a type of multiplayer game that opposes player teams against each other</string>
+    <string name="MULTIPLAYER_DESC">MULTIPLAYER allows you to play cooperatively with someone of against </string>
+    <string name="STRATEGY_DESC">STRATEGY requires from you to calculate every your action to win </string>
+
 </resources>

@@ -1,11 +1,15 @@
 package com.example.androidLab
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +22,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -26,11 +31,18 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,8 +60,10 @@ import androidx.core.view.WindowCompat
 import com.example.androidLab.ui.theme.AppTheme
 import com.example.myapplication.R
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import daniel.Labs.androidLab.chipData
 import io.sanghun.compose.video.VideoPlayer
 import io.sanghun.compose.video.uri.VideoPlayerMediaItem
+import java.nio.file.WatchEvent
 
 
 class MainActivity : ComponentActivity() {
@@ -115,13 +129,24 @@ class MainActivity : ComponentActivity() {
 
                //chips
                item {
-                   val items = listOf("MOBA", "MULTIPLAYER", "STRATEGY");
+
+
+                   val items = listOf(chipData(stringResource(R.string.MOBA), stringResource(R.string.MOBA_DESC) ),
+                                      chipData(stringResource(R.string.STRATEGY), stringResource(R.string.STRATEGY_DESC)),
+                                      chipData(stringResource(R.string.MULTIPLAYER), stringResource(R.string.MULTIPLAYER_DESC)))
                    ScrollableChipsView(
                       items,
                       modifier = Modifier.padding(bottom = 10.dp),
-                      contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
+                      contentPadding = PaddingValues(start = 24.dp, end = 24.dp),
+                      context,
 
-                   )
+
+
+
+                   )// fun descShow(description: String) {
+                //   Toast.makeText(context, "", Toast.LENGTH_LONG + 3).show()
+
+               //}
 
 
                    //Информация об игре
@@ -177,7 +202,18 @@ class MainActivity : ComponentActivity() {
                //Кнопка
                item  {
 
-                  PrimaryOvalButton(onClick = { Toast.makeText(context, "CLICKED", Toast.LENGTH_LONG).show() }, modifier = Modifier )
+                   var isLoading by remember { mutableStateOf(false) }
+                   var isTextVisible by remember { mutableStateOf(true)}
+                   var buttonColor by remember { mutableStateOf(AppTheme.ButtonColors.buttonColor)}
+
+                  PrimaryOvalButton(onClick = {
+                      isLoading = !isLoading
+                      isTextVisible = !isTextVisible
+                      if(isLoading) {
+                          buttonColor = AppTheme.ButtonColors.buttonColorActive;
+
+                      } else buttonColor =  AppTheme.ButtonColors.buttonColor
+                      }, isLoading, isTextVisible, buttonColor )
                }
 
         }
@@ -186,12 +222,21 @@ class MainActivity : ComponentActivity() {
 
     }
 
+//fun descShow(description: String) {
+  //  Toast.makeText(context, "", Toast.LENGTH_LONG + 3).show()
+
+//}
+
+
+
     @Preview
     @Composable
     fun DotaScreenHeader(modifier: Modifier = Modifier) {
 
                HeaderBackground (painter = painterResource(R.drawable.headerdota),
-                                 modifier = modifier.fillMaxWidth().height(400.dp),
+                                 modifier = modifier
+                                     .fillMaxWidth()
+                                     .height(400.dp),
                                  contentScale = ContentScale.Crop)
 
                HeaderGroup()
@@ -230,7 +275,9 @@ class MainActivity : ComponentActivity() {
                    Box() {
                    Image(painter = painterResource(R.drawable.dotalogo),
                          contentDescription = "",
-                         modifier = Modifier.fillMaxSize().scale(0.6F))
+                         modifier = Modifier
+                             .fillMaxSize()
+                             .scale(0.6F))
                    }
              }
     }
@@ -246,7 +293,9 @@ class MainActivity : ComponentActivity() {
                             Row() {
 
                                   Image(painter = painterResource(R.drawable.startsv),
-                                        modifier = Modifier.padding(top = 5.dp).size(76.dp, 12.dp),contentDescription = null
+                                        modifier = Modifier
+                                            .padding(top = 5.dp)
+                                            .size(76.dp, 12.dp),contentDescription = null
                                   )
 
                                   Text(text = stringResource(R.string.mill), style = AppTheme.TextStyle.Regular_12,
@@ -259,12 +308,12 @@ class MainActivity : ComponentActivity() {
     }
     //Scrollable chips
     @Composable
-    fun ScrollableChipsView(items : List<String>, modifier: Modifier, contentPadding: PaddingValues) {
+    fun ScrollableChipsView(items : List<chipData>, modifier: Modifier, contentPadding: PaddingValues, context: Context ) {
          LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp),
                  contentPadding = contentPadding,
                  modifier = modifier.offset(y = -10.dp)) {
                         items(items.size) { index ->
-                                           Chip(items[index])
+                                           Chip(items[index], context)
 
                         }
 
@@ -274,19 +323,25 @@ class MainActivity : ComponentActivity() {
 
     //Chip
     @Composable
-    fun Chip(itemToShow : String) {
+    fun Chip(itemToShow : chipData, context: Context) {
 
-         Box(modifier = Modifier.clip(shape = RoundedCornerShape(50.dp))
-                                .background(AppTheme.BgColors.chipBg)
-                                .padding(start = 15.dp, top = 5.dp, bottom = 5.dp, end = 15.dp) ) {
-                         Text(itemToShow, color = AppTheme.TextColors.chipElementColor,
+         Box(modifier = Modifier
+             .clip(shape = RoundedCornerShape(50.dp))
+             .background(AppTheme.BgColors.chipBg)
+             .padding(start = 15.dp, top = 5.dp, bottom = 5.dp, end = 15.dp)
+             .clickable(onClick = { Toast.makeText(context, itemToShow.description, Toast.LENGTH_LONG + 3).show()}) ) {
+                         Text(itemToShow.name, color = AppTheme.TextColors.chipElementColor,
                                           style = AppTheme.TextStyle.Regular_12)
+             
+
+                 
+
          }
 }
 
 //Видео
 @Composable
-fun VideoPreviewRow(previewResList : List<Int>, contentPadding : PaddingValues) {
+fun VideoPreviewRow(previewResList : List<Int>, contentPadding : PaddingValues ) {
 
     LazyRow(modifier = Modifier.padding(contentPadding)) {
         items(previewResList.size) { index ->
@@ -374,21 +429,40 @@ fun VideoPreviewRow(previewResList : List<Int>, contentPadding : PaddingValues) 
 
     //кнопка
     @Composable
-    fun PrimaryOvalButton( onClick : () -> Unit, modifier: Modifier) {
-        Button(
-            onClick = onClick,
-            modifier = Modifier
+    fun PrimaryOvalButton( onClick : () -> Unit,isLoading : Boolean, isTextVisible : Boolean, buttonColor: Color) {
 
-                .padding(start = 24.dp, end = 24.dp, top = 40.dp, bottom = 60.dp)
-                .wrapContentHeight(Alignment.CenterVertically)
-                .fillMaxSize()
-                .clip(shape = RoundedCornerShape(20.dp))
-                .height(64.dp),
-            shape = RectangleShape,
-            colors = ButtonDefaults.buttonColors(AppTheme.ButtonColors.buttonColor),
-        ) { Text(text = stringResource(R.string.buttonText),
-                 color = AppTheme.TextColors.buttonTextColor,
-                 style = AppTheme.TextStyle.Bold_20) }
+
+        Box() {
+            Button(
+                onClick = onClick,
+                modifier = Modifier
+
+                    .padding(start = 24.dp, end = 24.dp, top = 40.dp, bottom = 60.dp)
+                    .wrapContentHeight(Alignment.CenterVertically)
+                    .fillMaxSize()
+                    .clip(shape = RoundedCornerShape(20.dp))
+                    .height(64.dp),
+                shape = RectangleShape,
+                colors = ButtonDefaults.buttonColors(buttonColor),
+            ) {
+                AnimatedVisibility(visible = isTextVisible) {
+
+
+                    Text(
+                        text = stringResource(R.string.buttonText),
+                        color = AppTheme.TextColors.buttonTextColor,
+                        style = AppTheme.TextStyle.Bold_20
+                    )
+                }
+            }
+            AnimatedVisibility(visible = isLoading,
+                Modifier
+                    .align(Alignment.Center)
+                    .padding(bottom = 15.dp)) {
+                CircularProgressIndicator(color = AppTheme.BgColors.screenColor)
+
+            }
+        }
     }
 
 

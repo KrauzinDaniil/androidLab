@@ -18,6 +18,7 @@ object AppTheme {
 
     object ButtonColors {
          val buttonColor = Color(0xfff4d144)
+         val buttonColorActive = Color(0xffeba266)
 
 
     }
