@@ -77,6 +77,7 @@ class MainActivity : ComponentActivity() {
 
 
     //Главный экран
+
     @Composable
     fun MainScreen() {
             ApplySystemBarColors();
@@ -244,6 +245,7 @@ class MainActivity : ComponentActivity() {
     }
 
     //Главное фото
+
     @Composable
     fun HeaderBackground( painter: Painter, modifier: Modifier = Modifier, contentScale : ContentScale) {
 
@@ -254,6 +256,7 @@ class MainActivity : ComponentActivity() {
     }
 
     //Лого + название игры
+    @Preview
     @Composable
     fun HeaderGroup() {
              Row(modifier = Modifier.offset(x = 20.dp, y = -35.dp))  {
@@ -264,6 +267,7 @@ class MainActivity : ComponentActivity() {
     }
 
     //Лого
+    @Preview
     @Composable
     fun DotaLogo() {
              Box(modifier = Modifier.size(100.dp, 100.dp)) {
@@ -282,6 +286,7 @@ class MainActivity : ComponentActivity() {
              }
     }
     //Надписи и звезды
+    @Preview
     @Composable
     fun DotaLine() {
              Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.height(100.dp) ) {
@@ -307,6 +312,7 @@ class MainActivity : ComponentActivity() {
 
     }
     //Scrollable chips
+
     @Composable
     fun ScrollableChipsView(items : List<chipData>, modifier: Modifier, contentPadding: PaddingValues, context: Context ) {
          LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp),
