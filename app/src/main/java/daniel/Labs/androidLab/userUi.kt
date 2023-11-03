@@ -1,7 +1,7 @@
 package com.example.androidLab
 
-data class userUi(val text: Int, val date: Int, val user : user ){
+data class UserUi(val text: Int, val date: Int, val user : User ){
 
 
 }
-class user(val username: Int, val image: Int);
+class User(val username: Int, val image: Int);

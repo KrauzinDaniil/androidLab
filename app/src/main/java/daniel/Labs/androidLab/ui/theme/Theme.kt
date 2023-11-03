@@ -1,10 +1,18 @@
 package com.example.androidLab.ui.theme
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 object AppTheme {
@@ -32,6 +40,68 @@ object AppTheme {
         val colorNumberOfReviews = Color(0xffa8adb7)
         val dateColor = Color(	0xff5e6571)
         val buttonTextColor = Color(0xff050b18)
+
+    }
+
+    object Paddings {
+         val PaddingValues_Chips
+         @Composable
+         get() =
+              PaddingValues (start = 24.dp, end = 24.dp,)
+
+         val PaddingValues_Text_Standart
+         @Composable
+         get() =
+             PaddingValues(  start = 24.dp,
+                 end = 24.dp,
+                 top = 14.dp,
+                 bottom = 14.dp)
+
+         val PaddingValues_RatingBlock
+         @Composable
+         get() =
+             PaddingValues(start = 24.dp, end = 24.dp, bottom = 16.dp)
+
+         val PaddingValues_Divider
+         @Composable
+         get() =
+             PaddingValues( top = 12.dp,
+                 bottom = 10.dp,
+                 start = 30.dp,
+                 end = 30.dp)
+
+         val PaddingValues_ChipsInside
+         @Composable
+         get() =
+             PaddingValues ( start = 15.dp, top = 5.dp, bottom = 5.dp, end = 15.dp)
+
+    }
+
+    object Sizes  {
+        val MainPictureSize
+
+        get() = 400.dp
+
+
+        val DotaLogoHeight
+
+        get() = 100.dp
+
+        val DotaLogoWidth
+
+        get() = 100.dp
+
+        val ButtonSize
+
+        get() = 64.dp
+
+
+
+
+
+
+
+
 
     }
 
